@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صالون الحلاقة | حجز دورك الذكي</title>
+    <style>
+        :root {
+            --primary-color: #1a1a1a;
+            --accent-color: #d4af37; /* لون ذهبي كلاسيكي للصالونات */
+            --whatsapp-color: #25D366;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
+
+        .main-wrapper {
+            min-height: 100vh;
+            display: block;
+            padding: 20px 15px;
+        }
+
+        .container {
+            max-width: 450px;
+            background: #ffffff;
+            padding: 30px 20px;
+            margin: 40px auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+            border-top: 5px solid var(--accent-color);
+        }
+
+        .logo-area {
+            font-size: 50px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        h2 {
+            margin: 10px 0 5px 0;
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            text-align: right;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-submit:hover {
+            background-color: #333;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fffdf3;
+            border: 1px dashed var(--accent-color);
+            border-radius: 16px;
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .result h3 {
+            color: #2e7d32;
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .badge-container {
+            margin: 15px 0;
+        }
+
+        .ticket-badge {
+            display: inline-block;
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary-color);
+            background: #f0ebd4;
+            padding: 5px 25px;
+            border-radius: 50px;
+            border: 2px solid var(--accent-color);
+        }
+
+        .time-badge {
+            font-size: 18px;
+            font-weight: bold;
+            color: #c62828;
+            background: #ffebee;
+            padding: 6px 15px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .whatsapp-notice {
+            margin-top: 15px;
+            font-size: 13px;
+            color: #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .whatsapp-icon {
+            color: var(--whatsapp-color);
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="container">
+        <div class="logo-area">💈</div>
+        <h2>صالون الحلاقة الفخم</h2>
+        <p class="subtitle">احجز دورك إلكترونياً ووفر وقتك</p>
+        
+        <div class="form-group">
+            <label for="customerName">الاسم الكريم:</label>
+            <input type="text" id="customerName" placeholder="أدخل اسمك الثلاثي مثلاً..." required>
+        </div>
+        
+        <button class="btn-submit" onclick="bookQueue()">احصل على دورك الآن 🎟️</button>
+
+        <div class="result" id="resultBox">
+            <h3>تم تسجيل دورك بنجاح! 🎉</h3>
+            <p>رقم حجزك المميّز:</p>
+            <div class="badge-container">
+                <span class="ticket-badge" id="queueNumber">0</span>
+            </div>
+            <p>معاد الحضور التقريبي للصالون:</p>
+            <div>
+                <span class="time-badge" id="appointmentTime">00:00</span>
+            </div>
+            <div class="whatsapp-notice">
+                <span class="whatsapp-icon">💬</span>
+                <span>جاري تحويلك لواتساب لتأكيد الحجز مع كابتن الصالون تلقائياً...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // إعدادات النظام الثابتة
+    const startTimeStr = "09:00"; // بداية توقيت العمل يومياً
+    const serviceDuration = 20;   // الوقت التقريبي المستغرق لكل زبون (بالدقائق)
+    const barberPhoneNumber = "201221614781"; // رقم الحلاق الخاص بك
+
+    function bookQueue() {
+        const nameInput = document.getElementById('customerName').value.trim();
+        
+        if (nameInput === "") {
+            alert("من فضلك اكتب اسمك أولاً لتتمكن من الحجز!");
+            return;
+        }
+
+        // ================= [ جزء التصفير اليومي ] =================
+        let today = new Date().toISOString().slice(0, 10); // صيغة YYYY-MM-DD تاريخ اليوم الحالي
+        let lastSavedDate = localStorage.getItem('lastSavedDate');
+        let currentQueue = 0;
+
+        if (lastSavedDate !== today) {
+            // لو تاريخ اليوم مختلف عن تاريخ آخر حجز (يعني دخلنا في يوم جديد): صفر الطابور فوراً
+            currentQueue = 0;
+            localStorage.setItem('lastSavedDate', today); // تحديث التاريخ لليوم الجديد
+        } else {
+            // لو لسه في نفس اليوم: جلب الرقم الأخير المخزن من الذاكرة المحلية
+            currentQueue = localStorage.getItem('currentQueue') ? parseInt(localStorage.getItem('currentQueue')) : 0;
+        }
+        // ==========================================================
+
+        // إضافة العميل الحالي للطابور
+        currentQueue += 1;
+        localStorage.setItem('currentQueue', currentQueue);
+
+        // حسبة معاد الحضور التلقائي بناءً على رقم الدور
+        let timeParts = startTimeStr.split(":");
+        let totalMinutes = parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
+        let customerMinutes = totalMinutes + ((currentQueue - 1) * serviceDuration);
+        
+        let hours = Math.floor(customerMinutes / 60);
+        let minutes = customerMinutes % 60;
+        
+        let formattedHours = hours.toString().padStart(2, '0');
+        let formattedMinutes = minutes.toString().padStart(2, '0');
+        let finalTime = `${formattedHours}:${formattedMinutes}`;
+
+        // عرض النتيجة الأنيقة على الشاشة للعميل
+        document.getElementById('queueNumber').innerText = currentQueue;
+        document.getElementById('appointmentTime').innerText = finalTime;
+        document.getElementById('resultBox').style.display = "block";
+
+        // تجهيز نص الرسالة الصادر للحلاق على الواتساب
+        let message = `*حجز جديد من الموقع 💈*\n\n👤 *الاسم:* ${nameInput}\n🎟️ *رقم الدور:* ${currentQueue}\n⏰ *موعد الحضور التقريبي:* ${finalTime}\n\n_يرجى الحضور في الموعد المحدد لضمان عدم ضياع الدور._`;
+        let whatsappURL = `https://wa.me/${barberPhoneNumber}?text=${encodeURIComponent(message)}`;
+
+        // فتح تطبيق الواتساب بعد ثانيتين
+        setTimeout(() => {
+            window.open(whatsappURL, '_blank');
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
