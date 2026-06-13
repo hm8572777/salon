@@ -163,7 +163,6 @@
             font-style: italic;
         }
 
-        /* ستايل الدور الحالي والمنتهي */
         .my-row {
             background-color: #fffdf3 !important;
             font-weight: bold;
@@ -171,13 +170,13 @@
         }
 
         .expired-row {
-            color: #999 !important;
-            background-color: #fcfcfc;
+            color: #b0b0b0 !important;
+            background-color: #fafafa;
         }
 
         .expired-text {
             text-decoration: line-through;
-            color: #b0b0b0;
+            color: #b0b0b0 !important;
         }
 
         .current-badge {
@@ -185,10 +184,10 @@
             background-color: #2e7d32;
             color: white;
             font-size: 12px;
-            padding: 2px 6px;
+            padding: 4px 8px;
             border-radius: 4px;
             margin-top: 4px;
-            font-weight: normal;
+            font-weight: bold;
         }
 
         @keyframes blink {
@@ -265,9 +264,10 @@
     }
 
     function storedTimeToMinutes(timeStr) {
-        if (timeStr.includes('ص') || timeStr.includes('م')) {
-            let isPM = timeStr.includes('م');
-            let cleanTime = timeStr.replace(/[صم]/g, '').trim();
+        let sTime = timeStr.toString();
+        if (sTime.includes('ص') || sTime.includes('م')) {
+            let isPM = sTime.includes('م');
+            let cleanTime = sTime.replace(/[صم]/g, '').trim();
             let parts = cleanTime.split(':');
             let hours = parseInt(parts[0]);
             let minutes = parseInt(parts[1]);
@@ -276,20 +276,29 @@
             if (!isPM && hours === 12) hours = 0;
             return hours * 60 + minutes;
         }
-        return timeToMinutes(timeStr);
+        return timeToMinutes(sTime);
     }
 
-    function calculateNextAvailableTime(customersList) {
-        let now = new Date();
-        let utcHours = now.getUTCHours();
-        let egyptHours = (utcHours + 3) % 24;
-        let currentMinutes = egyptHours * 60 + now.getUTCMinutes();
-        
+    // جلب الوقت الحالي الموحد من الإنترنت (سيرفر توقيت عالمي + توقيت مصر الإجباري)
+    async function getLiveServerMinutes() {
+        try {
+            let res = await fetch("https://worldtimeapi.org/api/timezone/Africa/Cairo");
+            let timeData = await res.json();
+            let serverDateTime = new Date(timeData.datetime);
+            return serverDateTime.getHours() * 60 + serverDateTime.getMinutes();
+        } catch (e) {
+            // حل احتياطي في حال تعطل موقع التوقيت: استخدام توقيت UTC من جهاز الزبون مع فرض +3 ساعات مصر
+            let now = new Date();
+            let egyptHours = (now.getUTCHours() + 3) % 24;
+            return egyptHours * 60 + now.getUTCMinutes();
+        }
+    }
+
+    async function calculateNextAvailableTime(customersList) {
+        let currentMinutes = await getLiveServerMinutes();
         let startMinutes = timeToMinutes(startTimeStr);
         let baseMinutes = Math.max(startMinutes, currentMinutes);
 
-        // لتجنب ترحيل المواعيد بسبب الزبائن المنتهية وقتها، نبحث فقط عن الزبائن المستقبليين
-        let activeBookingMinutes = baseMinutes;
         if (customersList && customersList.length > 0) {
             let lastCustomer = customersList[customersList.length - 1];
             let lastCustMinutes = storedTimeToMinutes(lastCustomer.time);
@@ -311,14 +320,12 @@
             let tableBody = document.getElementById('queueTableBody');
             tableBody.innerHTML = ""; 
 
+            // جلب الدقائق الموحدة واليوم الموحد من دالة السيرفر
+            let currentMinutes = await getLiveServerMinutes();
+            
             let now = new Date();
             let egyptDate = new Date(now.getTime() + (3 * 60 * 60 * 1000));
             let today = egyptDate.toISOString().slice(0, 10);
-
-            // حساب الدقائق الحالية لتحديد حالة الدور
-            let utcHours = now.getUTCHours();
-            let egyptHours = (utcHours + 3) % 24;
-            let currentMinutes = egyptHours * 60 + now.getUTCMinutes();
 
             if (data && data.lastSavedDate && data.lastSavedDate !== today) {
                 data = { currentQueue: 0, lastSavedDate: today, customers: [] };
@@ -331,8 +338,6 @@
             }
 
             let customersList = data.customers;
-            
-            // تحديد من هو الشخص المتاح أو الحالي على الكرسي
             let currentActiveFound = false;
 
             customersList.forEach((cust) => {
@@ -343,16 +348,15 @@
                 let isCurrent = !isExpired && currentMinutes >= custMinutes && !currentActiveFound;
 
                 if (isCurrent) {
-                    currentActiveFound = true; // نضمن تحديد شخص واحد فقط حالياً
+                    currentActiveFound = true;
                 }
 
-                // تطبيق التنسيقات بناء على الحالة
                 if (isExpired) {
                     row.className = "expired-row";
                     row.innerHTML = `
                         <td><span class="expired-text">${cust.queueNum}</span></td>
                         <td><span class="expired-text">${cust.name}</span></td>
-                        <td><span class="expired-text" style="color:#b0b0b0;">${cust.time} (انتهى)</span></td>
+                        <td><span class="expired-text">${cust.time}</span></td>
                     `;
                 } else {
                     let savedMyName = localStorage.getItem('myBookedName');
@@ -413,7 +417,7 @@
                 lastSavedDate = today;
             }
 
-            let finalTime = calculateNextAvailableTime(customersList);
+            let finalTime = await calculateNextAvailableTime(customersList);
             currentQueue += 1;
 
             customersList.push({
