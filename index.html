@@ -279,23 +279,12 @@
         return timeToMinutes(sTime);
     }
 
-    // جلب الوقت الحالي الموحد من الإنترنت (سيرفر توقيت عالمي + توقيت مصر الإجباري)
-    async function getLiveServerMinutes() {
-        try {
-            let res = await fetch("https://worldtimeapi.org/api/timezone/Africa/Cairo");
-            let timeData = await res.json();
-            let serverDateTime = new Date(timeData.datetime);
-            return serverDateTime.getHours() * 60 + serverDateTime.getMinutes();
-        } catch (e) {
-            // حل احتياطي في حال تعطل موقع التوقيت: استخدام توقيت UTC من جهاز الزبون مع فرض +3 ساعات مصر
-            let now = new Date();
-            let egyptHours = (now.getUTCHours() + 3) % 24;
-            return egyptHours * 60 + now.getUTCMinutes();
-        }
-    }
-
-    async function calculateNextAvailableTime(customersList) {
-        let currentMinutes = await getLiveServerMinutes();
+    function calculateNextAvailableTime(customersList) {
+        let now = new Date();
+        let utcHours = now.getUTCHours();
+        let egyptHours = (utcHours + 3) % 24;
+        let currentMinutes = egyptHours * 60 + now.getUTCMinutes();
+        
         let startMinutes = timeToMinutes(startTimeStr);
         let baseMinutes = Math.max(startMinutes, currentMinutes);
 
@@ -320,12 +309,13 @@
             let tableBody = document.getElementById('queueTableBody');
             tableBody.innerHTML = ""; 
 
-            // جلب الدقائق الموحدة واليوم الموحد من دالة السيرفر
-            let currentMinutes = await getLiveServerMinutes();
-            
             let now = new Date();
             let egyptDate = new Date(now.getTime() + (3 * 60 * 60 * 1000));
             let today = egyptDate.toISOString().slice(0, 10);
+
+            let utcHours = now.getUTCHours();
+            let egyptHours = (utcHours + 3) % 24;
+            let currentMinutes = egyptHours * 60 + now.getUTCMinutes();
 
             if (data && data.lastSavedDate && data.lastSavedDate !== today) {
                 data = { currentQueue: 0, lastSavedDate: today, customers: [] };
@@ -417,7 +407,7 @@
                 lastSavedDate = today;
             }
 
-            let finalTime = await calculateNextAvailableTime(customersList);
+            let finalTime = calculateNextAvailableTime(customersList);
             currentQueue += 1;
 
             customersList.push({
