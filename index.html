@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صالون الحلاقة | حجز دورك الذكي</title>
+    <title>صالون الحلاقة | طابور الحجوزات المباشر</title>
     <style>
         :root {
             --primary-color: #1a1a1a;
-            --accent-color: #d4af37; /* لون ذهبي كلاسيكي للصالونات */
-            --whatsapp-color: #25D366;
+            --accent-color: #d4af37;
             --bg-color: #f8f9fa;
             --text-color: #333;
         }
@@ -23,20 +22,18 @@
             color: var(--text-color);
             margin: 0;
             padding: 0;
-            display: block;
         }
 
         .main-wrapper {
             min-height: 100vh;
-            display: block;
             padding: 20px 15px;
         }
 
         .container {
-            max-width: 450px;
+            max-width: 500px;
             background: #ffffff;
             padding: 30px 20px;
-            margin: 40px auto;
+            margin: 20px auto;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             text-align: center;
@@ -58,7 +55,7 @@
         .subtitle {
             color: #666;
             font-size: 14px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .form-group {
@@ -104,72 +101,100 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        .btn-submit:hover {
-            background-color: #333;
+        .btn-submit:disabled {
+            background-color: #999;
+            cursor: not-allowed;
         }
 
-        .result {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #fffdf3;
-            border: 1px dashed var(--accent-color);
-            border-radius: 16px;
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
+        .queue-section {
+            margin-top: 35px;
+            text-align: right;
         }
 
-        .result h3 {
-            color: #2e7d32;
-            margin-top: 0;
-            font-size: 20px;
-        }
-
-        .badge-container {
-            margin: 15px 0;
-        }
-
-        .ticket-badge {
-            display: inline-block;
-            font-size: 36px;
-            font-weight: 800;
+        .queue-section h3 {
             color: var(--primary-color);
-            background: #f0ebd4;
-            padding: 5px 25px;
-            border-radius: 50px;
-            border: 2px solid var(--accent-color);
-        }
-
-        .time-badge {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
             font-size: 18px;
-            font-weight: bold;
-            color: #c62828;
-            background: #ffebee;
-            padding: 6px 15px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-top: 5px;
-        }
-
-        .whatsapp-notice {
-            margin-top: 15px;
-            font-size: 13px;
-            color: #444;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            gap: 5px;
         }
 
-        .whatsapp-icon {
-            color: var(--whatsapp-color);
+        .live-badge {
+            background-color: #c62828;
+            color: white;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 50px;
+            animation: blink 1.5s infinite;
+        }
+
+        .queue-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .queue-table th, .queue-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            font-size: 15px;
+        }
+
+        .queue-table th {
+            background-color: #f1f1f1;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .queue-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        /* ستايل الدور الحالي والمنتهي */
+        .my-row {
+            background-color: #fffdf3 !important;
             font-weight: bold;
+            border: 1px dashed var(--accent-color);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .expired-row {
+            color: #999 !important;
+            background-color: #fcfcfc;
         }
 
+        .expired-text {
+            text-decoration: line-through;
+            color: #b0b0b0;
+        }
+
+        .current-badge {
+            display: inline-block;
+            background-color: #2e7d32;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 4px;
+            font-weight: normal;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
@@ -182,92 +207,249 @@
     <div class="container">
         <div class="logo-area">💈</div>
         <h2>صالون الحلاقة الفخم</h2>
-        <p class="subtitle">احجز دورك إلكترونياً ووفر وقتك</p>
+        <p class="subtitle">سجل اسمك وتابع دورك مباشرة من شاشتك</p>
         
         <div class="form-group">
             <label for="customerName">الاسم الكريم:</label>
-            <input type="text" id="customerName" placeholder="أدخل اسمك الثلاثي مثلاً..." required>
+            <input type="text" id="customerName" placeholder="أدخل اسمك هنا لحجز دور..." required>
         </div>
         
-        <button class="btn-submit" onclick="bookQueue()">احصل على دورك الآن 🎟️</button>
+        <button class="btn-submit" id="submitBtn" onclick="bookQueue()">احصل على دورك الآن 🎟️</button>
 
-        <div class="result" id="resultBox">
-            <h3>تم تسجيل دورك بنجاح! 🎉</h3>
-            <p>رقم حجزك المميّز:</p>
-            <div class="badge-container">
-                <span class="ticket-badge" id="queueNumber">0</span>
-            </div>
-            <p>معاد الحضور التقريبي للصالون:</p>
-            <div>
-                <span class="time-badge" id="appointmentTime">00:00</span>
-            </div>
-            <div class="whatsapp-notice">
-                <span class="whatsapp-icon">💬</span>
-                <span>جاري تحويلك لواتساب لتأكيد الحجز مع كابتن الصالون تلقائياً...</span>
-            </div>
+        <div class="queue-section">
+            <h3>
+                <span>📋 طابور الحجوزات اليومي</span>
+                <span class="live-badge">مباشر الآن 🟢</span>
+            </h3>
+            <table class="queue-table">
+                <thead>
+                    <tr>
+                        <th>الدور 🎟️</th>
+                        <th>الاسم 👤</th>
+                        <th>الموعد التقريبي ⏰</th>
+                    </tr>
+                </thead>
+                <tbody id="queueTableBody">
+                    <tr>
+                        <td colspan="3" class="no-data">جاري تحميل الطابور الحالي...</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 <script>
-    // إعدادات النظام الثابتة
-    const startTimeStr = "09:00"; // بداية توقيت العمل يومياً
-    const serviceDuration = 20;   // الوقت التقريبي المستغرق لكل زبون (بالدقائق)
-    const barberPhoneNumber = "201221614781"; // رقم الحلاق الخاص بك
+    const startTimeStr = "09:00"; 
+    const serviceDuration = 20;   
+    
+    const databaseURL = "https://barber-salon-2ffbb-default-rtdb.firebaseio.com/";
 
-    function bookQueue() {
+    function timeToMinutes(timeStr) {
+        let parts = timeStr.split(":");
+        return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    }
+
+    function minutesToTime12H(totalMinutes) {
+        let hours24 = Math.floor(totalMinutes / 60) % 24;
+        let minutes = totalMinutes % 60;
+        
+        let ampm = hours24 >= 12 ? 'م' : 'ص';
+        let hours12 = hours24 % 12;
+        hours12 = hours12 ? hours12 : 12; 
+        
+        let formattedMinutes = minutes.toString().padStart(2, '0');
+        let formattedHours = hours12.toString().padStart(2, '0');
+        
+        return `${formattedHours}:${formattedMinutes} ${ampm}`;
+    }
+
+    function storedTimeToMinutes(timeStr) {
+        if (timeStr.includes('ص') || timeStr.includes('م')) {
+            let isPM = timeStr.includes('م');
+            let cleanTime = timeStr.replace(/[صم]/g, '').trim();
+            let parts = cleanTime.split(':');
+            let hours = parseInt(parts[0]);
+            let minutes = parseInt(parts[1]);
+            
+            if (isPM && hours !== 12) hours += 12;
+            if (!isPM && hours === 12) hours = 0;
+            return hours * 60 + minutes;
+        }
+        return timeToMinutes(timeStr);
+    }
+
+    function calculateNextAvailableTime(customersList) {
+        let now = new Date();
+        let utcHours = now.getUTCHours();
+        let egyptHours = (utcHours + 3) % 24;
+        let currentMinutes = egyptHours * 60 + now.getUTCMinutes();
+        
+        let startMinutes = timeToMinutes(startTimeStr);
+        let baseMinutes = Math.max(startMinutes, currentMinutes);
+
+        // لتجنب ترحيل المواعيد بسبب الزبائن المنتهية وقتها، نبحث فقط عن الزبائن المستقبليين
+        let activeBookingMinutes = baseMinutes;
+        if (customersList && customersList.length > 0) {
+            let lastCustomer = customersList[customersList.length - 1];
+            let lastCustMinutes = storedTimeToMinutes(lastCustomer.time);
+            let nextSlotMinutes = lastCustMinutes + serviceDuration;
+
+            if (nextSlotMinutes > currentMinutes) {
+                return minutesToTime12H(nextSlotMinutes);
+            }
+        }
+        
+        return minutesToTime12H(baseMinutes);
+    }
+
+    async function loadLiveQueue() {
+        try {
+            let response = await fetch(`${databaseURL}queue.json`);
+            let data = await response.json();
+            
+            let tableBody = document.getElementById('queueTableBody');
+            tableBody.innerHTML = ""; 
+
+            let now = new Date();
+            let egyptDate = new Date(now.getTime() + (3 * 60 * 60 * 1000));
+            let today = egyptDate.toISOString().slice(0, 10);
+
+            // حساب الدقائق الحالية لتحديد حالة الدور
+            let utcHours = now.getUTCHours();
+            let egyptHours = (utcHours + 3) % 24;
+            let currentMinutes = egyptHours * 60 + now.getUTCMinutes();
+
+            if (data && data.lastSavedDate && data.lastSavedDate !== today) {
+                data = { currentQueue: 0, lastSavedDate: today, customers: [] };
+                await fetch(`${databaseURL}queue.json`, { method: 'PUT', body: JSON.stringify(data) });
+            }
+
+            if (!data || !data.customers || data.customers.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="3" class="no-data">الطابور فارغ حتى الآن. كن أول المسجلين! ✨</td></tr>`;
+                return;
+            }
+
+            let customersList = data.customers;
+            
+            // تحديد من هو الشخص المتاح أو الحالي على الكرسي
+            let currentActiveFound = false;
+
+            customersList.forEach((cust) => {
+                let row = document.createElement('tr');
+                let custMinutes = storedTimeToMinutes(cust.time);
+                
+                let isExpired = currentMinutes >= (custMinutes + serviceDuration); 
+                let isCurrent = !isExpired && currentMinutes >= custMinutes && !currentActiveFound;
+
+                if (isCurrent) {
+                    currentActiveFound = true; // نضمن تحديد شخص واحد فقط حالياً
+                }
+
+                // تطبيق التنسيقات بناء على الحالة
+                if (isExpired) {
+                    row.className = "expired-row";
+                    row.innerHTML = `
+                        <td><span class="expired-text">${cust.queueNum}</span></td>
+                        <td><span class="expired-text">${cust.name}</span></td>
+                        <td><span class="expired-text" style="color:#b0b0b0;">${cust.time} (انتهى)</span></td>
+                    `;
+                } else {
+                    let savedMyName = localStorage.getItem('myBookedName');
+                    if (savedMyName && cust.name === savedMyName) {
+                        row.className = "my-row";
+                    }
+                    
+                    let statusBadge = isCurrent ? `<br><span class="current-badge">جاري الحلاقة ✂️</span>` : '';
+                    
+                    row.innerHTML = `
+                        <td><strong>${cust.queueNum}</strong></td>
+                        <td>${cust.name} ${statusBadge}</td>
+                        <td style="color: #c62828; font-weight: bold;">${cust.time}</td>
+                    `;
+                }
+                
+                tableBody.appendChild(row);
+            });
+
+        } catch (error) {
+            console.error("خطأ في جلب البيانات:", error);
+        }
+    }
+
+    async function bookQueue() {
         const nameInput = document.getElementById('customerName').value.trim();
+        const submitBtn = document.getElementById('submitBtn');
         
         if (nameInput === "") {
             alert("من فضلك اكتب اسمك أولاً لتتمكن من الحجز!");
             return;
         }
 
-        // ================= [ جزء التصفير اليومي ] =================
-        let today = new Date().toISOString().slice(0, 10); // صيغة YYYY-MM-DD تاريخ اليوم الحالي
-        let lastSavedDate = localStorage.getItem('lastSavedDate');
-        let currentQueue = 0;
+        submitBtn.disabled = true;
+        submitBtn.innerText = "جاري حجز دورك...";
 
-        if (lastSavedDate !== today) {
-            // لو تاريخ اليوم مختلف عن تاريخ آخر حجز (يعني دخلنا في يوم جديد): صفر الطابور فوراً
-            currentQueue = 0;
-            localStorage.setItem('lastSavedDate', today); // تحديث التاريخ لليوم الجديد
-        } else {
-            // لو لسه في نفس اليوم: جلب الرقم الأخير المخزن من الذاكرة المحلية
-            currentQueue = localStorage.getItem('currentQueue') ? parseInt(localStorage.getItem('currentQueue')) : 0;
+        try {
+            let now = new Date();
+            let egyptDate = new Date(now.getTime() + (3 * 60 * 60 * 1000));
+            let today = egyptDate.toISOString().slice(0, 10);
+
+            let response = await fetch(`${databaseURL}queue.json`);
+            let data = await response.json();
+
+            let currentQueue = 0;
+            let lastSavedDate = "";
+            let customersList = [];
+
+            if (data) {
+                currentQueue = data.currentQueue || 0;
+                lastSavedDate = data.lastSavedDate || "";
+                customersList = data.customers || [];
+            }
+
+            if (lastSavedDate !== today) {
+                currentQueue = 0;
+                customersList = [];
+                lastSavedDate = today;
+            }
+
+            let finalTime = calculateNextAvailableTime(customersList);
+            currentQueue += 1;
+
+            customersList.push({
+                name: nameInput,
+                queueNum: currentQueue,
+                time: finalTime
+            });
+
+            await fetch(`${databaseURL}queue.json`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    currentQueue: currentQueue,
+                    lastSavedDate: today,
+                    customers: customersList
+                })
+            });
+
+            localStorage.setItem('myBookedName', nameInput);
+            
+            document.getElementById('customerName').value = ""; 
+            submitBtn.disabled = false;
+            submitBtn.innerText = "احصل على دورك الآن 🎟️";
+
+            alert(`تم حجز دورك بنجاح! 🎉\nرقمك هو: ${currentQueue}\nموعدك التقريبي: ${finalTime}`);
+            loadLiveQueue();
+
+        } catch (error) {
+            console.error(error);
+            alert("حدث خطأ في الاتصال بالسيرفر.");
+            submitBtn.disabled = false;
+            submitBtn.innerText = "احصل على دورك الآن 🎟️";
         }
-        // ==========================================================
-
-        // إضافة العميل الحالي للطابور
-        currentQueue += 1;
-        localStorage.setItem('currentQueue', currentQueue);
-
-        // حسبة معاد الحضور التلقائي بناءً على رقم الدور
-        let timeParts = startTimeStr.split(":");
-        let totalMinutes = parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
-        let customerMinutes = totalMinutes + ((currentQueue - 1) * serviceDuration);
-        
-        let hours = Math.floor(customerMinutes / 60);
-        let minutes = customerMinutes % 60;
-        
-        let formattedHours = hours.toString().padStart(2, '0');
-        let formattedMinutes = minutes.toString().padStart(2, '0');
-        let finalTime = `${formattedHours}:${formattedMinutes}`;
-
-        // عرض النتيجة الأنيقة على الشاشة للعميل
-        document.getElementById('queueNumber').innerText = currentQueue;
-        document.getElementById('appointmentTime').innerText = finalTime;
-        document.getElementById('resultBox').style.display = "block";
-
-        // تجهيز نص الرسالة الصادر للحلاق على الواتساب
-        let message = `*حجز جديد من الموقع 💈*\n\n👤 *الاسم:* ${nameInput}\n🎟️ *رقم الدور:* ${currentQueue}\n⏰ *موعد الحضور التقريبي:* ${finalTime}\n\n_يرجى الحضور في الموعد المحدد لضمان عدم ضياع الدور._`;
-        let whatsappURL = `https://wa.me/${barberPhoneNumber}?text=${encodeURIComponent(message)}`;
-
-        // فتح تطبيق الواتساب بعد ثانيتين
-        setTimeout(() => {
-            window.open(whatsappURL, '_blank');
-        }, 2000);
     }
+
+    loadLiveQueue();
+    setInterval(loadLiveQueue, 5000);
 </script>
 
 </body>
